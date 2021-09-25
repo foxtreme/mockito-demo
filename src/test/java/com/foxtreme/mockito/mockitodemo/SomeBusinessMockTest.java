@@ -1,29 +1,39 @@
 package com.foxtreme.mockito.mockitodemo;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class SomeBusinessMockTest {
 
+	@Mock
+	DataService dataServiceMock;
+	
+	@InjectMocks
+	SomeBusinessImpl businessImpl;
+	
 	@Test
 	public void testFindTheGreatestFromAllData() {
-		DataService dataServiceMock = mock(DataService.class);
 		when(dataServiceMock.retrieveAllData()).thenReturn(new int[] {12, 15, 3});
-		SomeBusinessImpl businessImpl = new SomeBusinessImpl(dataServiceMock);
-		int result = businessImpl.findTheGreatestFromAllData();
-		assertEquals(15, result);
+		assertEquals(15, businessImpl.findTheGreatestFromAllData());
 	}
 	
 	@Test
 	public void testFindTheGreatestFromAllData_ForOneValue() {
-		DataService dataServiceMock = mock(DataService.class);
 		when(dataServiceMock.retrieveAllData()).thenReturn(new int[] {15});
-		SomeBusinessImpl businessImpl = new SomeBusinessImpl(dataServiceMock);
-		int result = businessImpl.findTheGreatestFromAllData();
-		assertEquals(15, result);
+		assertEquals(15, businessImpl.findTheGreatestFromAllData());
+	}
+	
+	@Test
+	public void testFindTheGreatestFromAllData_NoValues() {
+		when(dataServiceMock.retrieveAllData()).thenReturn(new int[] {});
+		assertEquals(Integer.MIN_VALUE, businessImpl.findTheGreatestFromAllData());
 	}
 
 }
